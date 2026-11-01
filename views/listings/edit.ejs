@@ -1,0 +1,356 @@
+<% layout("/layouts/boilerplate")%>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="/css/style.css">
+<style>
+    body {
+        background-color: #f8f9fa;
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    .container-fluid {
+        padding: 4rem;
+    }
+
+    .form-container {
+        background: #fff;
+        padding: 2.5rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        margin: 2rem auto;
+        max-width: 800px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .form-container::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: linear-gradient(to right, #ffc107, #ff9800);
+        transform: scaleX(0);
+        transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .form-container:hover::before {
+        transform: scaleX(1);
+    }
+
+    .form-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 2rem;
+        position: relative;
+        display: inline-block;
+    }
+
+    .form-title::after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 0;
+        width: 60px;
+        height: 4px;
+        background: linear-gradient(to right, #ffc107, #ff9800);
+        transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .form-title:hover::after {
+        width: 100%;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+
+    .form-control {
+        border: 2px solid #eee;
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+        transition: all 0.3s ease;
+        box-shadow: none;
+    }
+
+    .form-control:focus {
+        border-color: #ffc107;
+        box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.25);
+    }
+
+    .form-control::placeholder {
+        color: #a0aec0;
+    }
+
+    .image-preview {
+        width: 100%;
+        height: 200px;
+        border: 2px dashed #ddd;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        position: relative;
+        transition: all 0.3s ease;
+        background: #f8f9fa;
+    }
+
+    .image-preview:hover {
+        border-color: #ffc107;
+        background: #fff;
+    }
+
+    .image-preview img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+    }
+
+    .image-preview::before {
+        content: 'Click to change image';
+        color: #a0aec0;
+        font-size: 1rem;
+        text-align: center;
+        display: none;
+    }
+
+    .image-preview:empty::before {
+        display: block;
+    }
+
+    .image-preview:empty::after {
+        content: '\f03e';
+        font-family: 'Font Awesome 5 Free';
+        font-weight: 900;
+        font-size: 2rem;
+        color: #a0aec0;
+        margin-top: 1rem;
+    }
+
+    .btn-submit {
+        background: linear-gradient(45deg, #ffc107, #ff9800);
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        color: white;
+        font-weight: 600;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 4px 12px rgba(255, 193, 7, 0.3);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(255, 193, 7, 0.4);
+    }
+
+    .btn-submit i {
+        margin-right: 8px;
+        transition: transform 0.3s ease;
+    }
+
+    .btn-submit:hover i {
+        transform: translateX(4px);
+    }
+
+    .loading-spinner {
+        display: none;
+        width: 20px;
+        height: 20px;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        border-top-color: #fff;
+        animation: spin 1s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+        margin-right: 8px;
+    }
+
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+
+    .btn-loading .loading-spinner {
+        display: inline-block;
+    }
+
+    .btn-loading span {
+        display: none;
+    }
+
+    .form-section {
+        margin-bottom: 2rem;
+        padding: 1.5rem;
+        border-radius: 8px;
+        background: #f8f9fa;
+        transition: all 0.3s ease;
+    }
+
+    .form-section:hover {
+        background: #fff;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .form-section-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .form-section-title i {
+        color: #ffc107;
+    }
+
+    .error-message {
+        color: #e74c3c;
+        font-size: 0.9rem;
+        margin-top: 0.5rem;
+        display: none;
+    }
+
+    .form-control.is-invalid + .error-message {
+        display: block;
+    }
+
+    .current-image {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+    }
+
+    .current-image:hover {
+        transform: scale(1.02);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+</style>
+
+<title>Edit Listing - WanderLust</title>
+
+<div class="container-fluid px-4 py-4">
+    <div class="form-container">
+        <h1 class="form-title">Edit Listing</h1>
+        
+        <form action="/listings/<%= listing._id %>?_method=PUT" method="POST" class="needs-validation" novalidate enctype="multipart/form-data">
+            
+
+            <div class="form-section">
+                <h2 class="form-section-title">
+                    <i class="fas fa-info-circle"></i>
+                    Basic Information
+                </h2>
+                <div class="mb-3">
+                    <label for="title" class="form-label">Title</label>
+                    <input type="text" id="title" name="listing[title]" class="form-control" placeholder="Enter listing title" value="<%= listing.title %>" required>
+                    <div class="error-message">Please enter a title</div>
+                </div>
+                <div class="mb-3">
+                    <label for="description" class="form-label">Description</label>
+                    <textarea id="description" name="listing[description]" class="form-control" rows="3" placeholder="Enter listing description" required><%= listing.description %></textarea>
+                    <div class="error-message">Please enter a description</div>
+                </div>
+                
+                <!-- <div class="mb-3">
+                    <label for="imageURL" class="form-label">Change Image URL</label>
+                    <input type="file" id="imageURL" name="listing[image]" class="form-control">
+                </div> -->
+                <div class="mb-3">
+                    <h3>Original Image</h3>
+                    <img src="<%= originalImg %>" alt="hi">
+                </div>
+                
+                
+            </div>
+
+            <div class="form-section">
+                <h2 class="form-section-title">
+                    <i class="fas fa-map-marker-alt"></i>
+                    Location Details
+                </h2>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="location" class="form-label">Location</label>
+                        <input type="text" id="location" name="listing[location]" class="form-control" placeholder="Enter location" value="<%= listing.location %>" required>
+                        <div class="error-message">Please enter a location</div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="country" class="form-label">Country</label>
+                        <input type="text" id="country" name="listing[country]" class="form-control" placeholder="Enter country" value="<%= listing.country %>" required>
+                        <div class="error-message">Please enter a country</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2 class="form-section-title">
+                    <i class="fas fa-tag"></i>
+                    Pricing
+                </h2>
+                <div class="mb-3">
+                    <label for="price" class="form-label">Price (₹)</label>
+                    <input type="number" id="price" name="listing[price]" class="form-control" placeholder="Enter price" value="<%= listing.price %>" required min="0">
+                    <div class="error-message">Please enter a valid price</div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-submit" id="submitBtn">
+                <div class="loading-spinner"></div>
+                <i class="fas fa-save"></i>
+                <span>Update Listing</span>
+            </button>
+        </form>
+    </div>
+</div>
+
+<script>
+    function previewImage(input) {
+        const preview = document.getElementById('imagePreview');
+        const file = input.files[0];
+        
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                preview.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+            }
+            reader.readAsDataURL(file);
+        }
+    }
+
+    // Form validation
+    const form = document.querySelector('form');
+    form.addEventListener('submit', function(e) {
+        if (!form.checkValidity()) {
+            e.preventDefault();
+            e.stopPropagation();
+        } else {
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.classList.add('btn-loading');
+            submitBtn.disabled = true;
+        }
+        form.classList.add('was-validated');
+    });
+
+    // Real-time validation
+    const inputs = form.querySelectorAll('input, textarea');
+    inputs.forEach(input => {
+        input.addEventListener('input', function() {
+            if (this.checkValidity()) {
+                this.classList.remove('is-invalid');
+            } else {
+                this.classList.add('is-invalid');
+            }
+        });
+    });
+</script>

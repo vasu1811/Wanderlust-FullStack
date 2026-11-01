@@ -1,0 +1,610 @@
+<% layout("/layouts/boilerplate") %>
+
+    <title>
+        <%= listing.title %> - WanderLust
+    </title>
+    <link rel="stylesheet" href="/css/rating.css">
+
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .main-image {
+            border-radius: 12px;
+            max-height: 380px;
+            object-fit: cover;
+            width: 100%;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .main-image::after {
+            content: 'Click to view full size';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 8px;
+            text-align: center;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .main-image:hover::after {
+            transform: translateY(0);
+        }
+
+        .gallery-thumbnail {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .gallery-thumbnail::after {
+            content: 'View';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .gallery-thumbnail:hover::after {
+            opacity: 1;
+        }
+
+        .gallery-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            overflow-x: auto;
+            padding: 5px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 1rem;
+        }
+
+        .price {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: #e74c3c;
+            margin: 1rem 0;
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background: rgba(231, 76, 60, 0.1);
+            border-radius: 8px;
+        }
+
+        .location {
+            color: #7f8c8d;
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .description {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #34495e;
+        }
+
+        .btn-custom {
+            padding: 10px 20px;
+            font-size: 0.9rem;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-warning {
+            background-color: #f0ad4e;
+            border: none;
+        }
+
+        .btn-warning:hover {
+            background-color: #ec971f;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background-color: #d9534f;
+            border: none;
+        }
+
+        .btn-danger:hover {
+            background-color: #c9302c;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background-color: #5cb85c;
+            border: none;
+        }
+
+        .btn-success:hover {
+            background-color: #4cae4c;
+            transform: translateY(-2px);
+        }
+
+        textarea {
+            resize: none;
+            border-radius: 8px;
+            padding: 12px;
+            border: 1px solid #ddd;
+            transition: border-color 0.3s ease;
+        }
+
+        textarea:focus {
+            border-color: #5cb85c;
+            box-shadow: 0 0 0 0.2rem rgba(92, 184, 92, 0.25);
+        }
+
+        .card.review-card {
+            border-left: 4px solid #ffc107;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 8px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card.review-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, rgba(255, 193, 7, 0.1), transparent);
+            opacity: 0;
+            transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card.review-card:hover::after {
+            opacity: 1;
+        }
+
+        .review-rating {
+            font-size: 1.2rem;
+            color: #ffc107;
+            margin-bottom: 0.5rem;
+        }
+
+        .review-content {
+            flex-grow: 1;
+            margin-bottom: 1rem;
+        }
+
+        .review-footer {
+            margin-top: auto;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+            font-size: 0.9rem;
+        }
+
+        .review-username {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .review-date {
+            color: #7f8c8d;
+        }
+
+        .reviews-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .no-reviews {
+            text-align: center;
+            padding: 2rem;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            color: #6c757d;
+        }
+
+        .no-reviews i {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: #ffc107;
+        }
+
+        .card-title .badge {
+            font-size: 1rem;
+            padding: 8px 12px;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin: 2rem 0 1.5rem;
+            position: relative;
+            padding-bottom: 10px;
+            display: inline-block;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(to right, #ffc107, #ff9800);
+            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .section-title:hover::after {
+            width: 100%;
+        }
+
+        .review-form {
+            max-width: 600px;
+            margin: 0;
+            background-color: #fff;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .review-form::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(to right, #5cb85c, #4cae4c);
+            transform: scaleX(0);
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .review-form:hover::before {
+            transform: scaleX(1);
+        }
+
+        .rating-slider {
+            width: 100%;
+            height: 8px;
+            /*  -webkit-appearance: none; */
+            background: linear-gradient(to right, #ddd, #eee);
+            border-radius: 4px;
+            outline: none;
+            margin: 1rem 0;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .rating-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            background: #ffc107;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .rating-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-image {
+            max-width: 100%;
+            max-height: 80vh;
+            object-fit: contain;
+        }
+
+        .listing-details {
+            background: #fff;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .listing-details::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(to bottom, #ffc107, #ff9800);
+            transform: scaleY(0);
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .listing-details:hover::before {
+            transform: scaleY(1);
+        }
+
+        .loading-spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+            margin-right: 8px;
+        }
+
+        .card.review-card::after {
+            pointer-events: none;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .btn-loading .loading-spinner {
+            display: inline-block;
+        }
+
+        .btn-loading span {
+            display: none;
+        }
+
+        #map {
+            height: 90%;
+            width: 100%;
+            border-radius: 10px;
+        }
+    </style>
+
+
+    <div class="container-fluid px-4 py-4">
+        <!-- Image Gallery -->
+        <div class="row">
+            <div class="col-12">
+                <img src="<%= listing.image.url %>" alt="<%= listing.title %> image" class="main-image mb-3">
+            </div>
+        </div>
+
+        <!-- Listing Details -->
+        <div class="row mt-4 d-flex">
+            <div class="col-8 md-8">
+                <div class="listing-details">
+                    <h1 class="section-title">
+                        <%= listing.title %>
+                    </h1>
+                    <p class="description">
+                        <%= listing.description %>
+                    </p>
+                    <p class="price">₹<%= listing.price.toLocaleString("en-IN") %>
+                    </p>
+                    <p class="location">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <%= listing.location %>, <%= listing.country %>
+                    </p>
+                    <p class="owner">
+                        <i>Owned by </i> <b>
+                            <%= listing.owner.username %>
+                        </b>
+                    </p>
+                    <!-- Edit/Delete Buttons -->
+                    <% if (currUser && currUser._id.equals(listing.owner._id)) { %>
+
+                        <div class="d-flex flex-md-row justify-content-start align-items-start gap-3 mt-3 mt-md-0">
+                            <a href="/listings/<%= listing._id %>/edit"
+                                class="btn btn-warning d-flex align-items-center">
+                                <i class="fas fa-edit me-2"></i>
+                                <span>Edit</span>
+                            </a>
+                            <form action="/listings/<%= listing._id %>?_method=DELETE" method="POST" class="w-100">
+                                <button type="submit" class="btn btn-danger d-flex align-items-center">
+                                    <i class="fas fa-trash me-2"></i>
+                                    <span>Delete</span>
+                                </button>
+                            </form>
+                        </div>
+                        <% } %>
+                </div>
+            </div>
+
+            <!-- <div class="col-6 mb-3 text-center">
+                <h3>Where you'll be</h3>
+                <div id="map"></div>
+            </div> -->
+        </div>
+
+
+        <!-- Review Form -->
+        <hr class="my-4">
+        <% if(currUser){ %>
+            <h3 class="section-title">Leave a Review</h3>
+            <div class="review-form">
+                <form action="/listings/<%= listing._id %>/reviews" method="POST" class="needs-validation" novalidate>
+                    <!-- <div class="mb-4">
+                        <label for="rating" class="form-label fw-bold">Rating: <span id="ratingValue">3</span>/5</label>
+                        <input type="range" id="rating" name="review[rating]" class="rating-slider" min="1" max="5"
+                            value="3" oninput="document.getElementById('ratingValue').textContent = this.value"
+                            required>
+                    </div> -->
+
+                    <fieldset class="starability-basic">
+                        <legend>First rating:</legend>
+
+                        <input type="radio" id="no-rate" class="input-no-rate" name="review[rating]" value="1"
+                            aria-label="No rating." />
+
+
+                        <input type="radio" id="first-rate1" name="review[rating]" value="1" />
+                        <label for="first-rate1" title="Terrible">1 star</label>
+
+                        <input type="radio" id="first-rate2" name="review[rating]" value="2" />
+                        <label for="first-rate2" title="Not good">2 stars</label>
+
+                        <input type="radio" id="first-rate3" name="review[rating]" value="3" />
+                        <label for="first-rate3" title="Average">3 stars</label>
+
+                        <input type="radio" id="first-rate4" name="review[rating]" value="4" />
+                        <label for="first-rate4" title="Very good">4 stars</label>
+
+                        <input type="radio" id="first-rate5" name="review[rating]" value="5" />
+                        <label for="first-rate5" title="Amazing">5 stars</label>
+                    </fieldset>
+
+
+                    <div class="mb-4">
+                        <label for="comment" class="form-label fw-bold">Comment</label>
+                        <textarea id="comment" name="review[comment]" class="form-control" rows="3"
+                            placeholder="Share your experience..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-success d-flex align-items-center" id="submitReview">
+                        <div class="loading-spinner"></div>
+                        <span>Submit Review</span>
+                    </button>
+                </form>
+            </div>
+            <% } %>
+                <!-- All Reviews -->
+                <h4 class="section-title">All Reviews</h4>
+                <% if (listing.reviews.length===0) { %>
+                    <div class="no-reviews">
+                        <i class="far fa-comment-dots"></i>
+                        <p class="mb-0">No reviews yet. Be the first to review!</p>
+                    </div>
+                    <% } else { %>
+                        <div class="reviews-grid">
+                            <% for (let review of listing.reviews) { %>
+                                <div class="card review-card">
+                                    <div class="card-body">
+                                        <div class="upper-section"
+                                            style="display: flex; justify-content: space-between;">
+                                            <div class="first">
+
+
+                                                <div class="review-rating mb-2 ">
+                                                    <p class="starability-result card-text"
+                                                        data-rating="<%=review.rating%>">
+                                                    </p>
+                                                </div>
+                                                <div class="review-content">
+                                                    <p class="card-text">
+                                                        <%= review.comment %>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div class="second">
+                                                <form
+                                                    action="/listings/<%= listing._id %>/reviews/<%= review._id %>?_method=DELETE"
+                                                    method="POST">
+                                                    <button type="submit" class="btn btn-sm btn-danger"
+                                                        style="width: 82px;">
+                                                        <i class="fas fa-trash-alt"></i> Delete
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
+
+                                        <div class="review-footer d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <div class="review-username">
+                                                    <i class="fas fa-user-circle me-2"></i>
+                                                    @<%= review.author.username || 'Anonymous' %>
+                                                </div>
+                                                <div class="review-date">
+                                                    <i class="far fa-clock me-2"></i>
+                                                    <%= review.createdAt.toDateString() %>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <% } %>
+                        </div>
+                        <% } %>
+    </div>
+
+    <script>
+        let mapToken = "<%= process.env.MAP_TOKEN %>"
+        console.log(mapToken)
+        mapboxgl.accessToken = mapToken;
+        const map = new mapboxgl.Map({
+            container: 'map',
+            center: [72.5714, 23.0225],
+            zoom: 9
+        });
+
+        // Form submission loading state
+        const form = document.querySelector('form');
+        if (form) {
+            form.addEventListener('submit', function (e) {
+                const submitBtn = document.getElementById('submitReview');
+                if (submitBtn) {
+                    submitBtn.classList.add('btn-loading');
+                    submitBtn.disabled = true;
+                }
+            });
+        }
+
+        // Smooth scroll to reviews
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Initialize tooltips
+        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+
+
+    </script>
