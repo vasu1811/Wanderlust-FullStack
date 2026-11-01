@@ -87,13 +87,12 @@ Follow these steps to set up the project locally.
    Create a `.env` file in the root directory and add the following:
 
    ```env
-   PORT=3000
-   DB_URL=your_mongodb_connection_string
-   CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
-   CLOUDINARY_API_KEY=your_cloudinary_api_key
-   CLOUDINARY_API_SECRET=your_cloudinary_api_secret
-   MAPBOX_TOKEN=your_mapbox_token
-   SESSION_SECRET=your_session_secret
+   ATLASDB_URL=your_mongodb_connection_string
+   SECRET=your_session_secret
+   CLOUD_NAME=your_cloudinary_cloud_name
+   CLOUD_API_KEY=your_cloudinary_api_key
+   CLOUD_API_SECRET=your_cloudinary_api_secret
+   MAP_TOKEN=your_mapbox_token
    ```
 
 4. **Start the application**
@@ -102,7 +101,15 @@ Follow these steps to set up the project locally.
    npm start
    ```
 
-   The application will be running at `http://localhost:3000`.
+   The application will be running at the port shown in the server log (8080 by default).
+
+## Deploying on Render
+
+The Express app and EJS frontend are served together from the repository root; there is no separate frontend service.
+
+The included `render.yaml` configures a Node web service with the repository root as its Root Directory, `npm ci` as its Build Command, and `npm start` as its Start Command. Set the environment variables listed in that file in Render. Render assigns `PORT` automatically; the app listens on that port. Do not set `PORT` manually.
+
+For an existing Render service that is not managed as a Blueprint, set Root Directory to `.`, Build Command to `npm ci`, and Start Command to `npm start` in its settings. The service must have the same environment variables as the Blueprint configuration.
 
 ## 🧪 Testing
 
